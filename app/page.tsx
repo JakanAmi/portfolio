@@ -5,6 +5,7 @@ import LandscapeOriginal from './components/LandscapeOriginal';
 import LandscapeWinter from './components/LandscapeWinter';
 import LandscapeCss from './components/LandscapeCss';
 import LandscapeCanvas from './components/LandscapeCanvas';
+import HikerAnimation from './components/HikerAnimation';
 
 type LandscapeId = 'original' | 'winter' | 'css' | 'canvas';
 const LANDSCAPES: { id: LandscapeId; label: string }[] = [
@@ -153,6 +154,9 @@ export default function Page() {
           {landscape === 'winter'   && <LandscapeWinter />}
           {landscape === 'css'      && <LandscapeCss />}
           {landscape === 'canvas'   && <LandscapeCanvas />}
+
+          {/* ── Hiker ── */}
+          <HikerAnimation />
 
           {/* ── Location markers: wooden signpost style ── */}
           {LOCATIONS.map((loc, idx) => {
