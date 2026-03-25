@@ -39,7 +39,7 @@ function groundY(x: number): number {
 const LOCATIONS = [
   { id: 'town'    as const, x: 350,  label: '街',     sub: 'プロフィール' },
   { id: 'trail'   as const, x: 1050, label: '登山口', sub: 'チャンネル実績' },
-  { id: 'hut'     as const, x: 2000, label: '山小屋', sub: '案件 & 料金' },
+  { id: 'hut'     as const, x: 2000, label: '山小屋', sub: '案件 & 料金',  signX: 2090 },
   { id: 'summit'  as const, x: 3290, label: '山頂',   sub: 'お問い合わせ' },
 ];
 type Loc = typeof LOCATIONS[number]['id'];
@@ -160,7 +160,8 @@ export default function Page() {
 
           {/* ── Location markers: wooden signpost style ── */}
           {LOCATIONS.map((loc, idx) => {
-            const svgY   = groundY(loc.x);
+            const signX  = (loc as typeof loc & { signX?: number }).signX ?? loc.x;
+            const svgY   = groundY(signX);
             const pct    = svgY / SVG_H;
             const isActive = active === loc.id;
             // Alternate sign tilt slightly per marker
@@ -170,7 +171,7 @@ export default function Page() {
                 key={loc.id}
                 className="noscroll absolute flex flex-col items-end"
                 style={{
-                  left: loc.x,
+                  left: signX,
                   top: `calc(${pct * 100}% - 80px)`,
                   transform: 'translateX(-50%)',
                   filter: isActive ? 'drop-shadow(0 4px 10px rgba(0,0,0,0.35))' : 'drop-shadow(0 2px 4px rgba(0,0,0,0.18))',
