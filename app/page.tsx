@@ -3,11 +3,15 @@
 import { useRef, useState, useEffect } from 'react';
 import LandscapeOriginal from './components/LandscapeOriginal';
 import LandscapeWinter from './components/LandscapeWinter';
+import LandscapeCss from './components/LandscapeCss';
+import LandscapeCanvas from './components/LandscapeCanvas';
 
-type LandscapeId = 'original' | 'winter';
+type LandscapeId = 'original' | 'winter' | 'css' | 'canvas';
 const LANDSCAPES: { id: LandscapeId; label: string }[] = [
-  { id: 'original', label: '春〜秋' },
-  { id: 'winter',   label: '冬' },
+  { id: 'original', label: 'SVG春' },
+  { id: 'winter',   label: 'SVG冬' },
+  { id: 'css',      label: 'CSS' },
+  { id: 'canvas',   label: 'Canvas' },
 ];
 
 // ── World dimensions ──────────────────────────────────────────────
@@ -132,7 +136,11 @@ export default function Page() {
   return (
     <>
       <div id="vp" className="fixed inset-0 overflow-hidden"
-        style={{ background: landscape === 'winter' ? '#0a0e1a' : '#b8a0c0', cursor: 'grab', transition: 'background 0.8s' }}>
+        style={{
+          background: landscape === 'winter' ? '#0a0e1a' : '#b8a0c0',
+          cursor: 'grab',
+          transition: 'background 0.8s',
+        }}>
 
         {/* ── World ── */}
         <div
@@ -140,9 +148,11 @@ export default function Page() {
           className="absolute top-0 left-0 h-full"
           style={{ width: WORLD_W, willChange: 'transform', opacity: ready ? 1 : 0, transition: 'opacity 0.8s' }}
         >
-          {/* SVG landscape */}
+          {/* Landscape */}
           {landscape === 'original' && <LandscapeOriginal />}
           {landscape === 'winter'   && <LandscapeWinter />}
+          {landscape === 'css'      && <LandscapeCss />}
+          {landscape === 'canvas'   && <LandscapeCanvas />}
 
           {/* ── Location markers (inside world) ── */}
           {LOCATIONS.map((loc) => {
