@@ -154,50 +154,110 @@ export default function Page() {
           {landscape === 'css'      && <LandscapeCss />}
           {landscape === 'canvas'   && <LandscapeCanvas />}
 
-          {/* ── Location markers (inside world) ── */}
-          {LOCATIONS.map((loc) => {
-            const svgY = groundY(loc.x);
-            const pct  = svgY / SVG_H;
+          {/* ── Location markers: wooden signpost style ── */}
+          {LOCATIONS.map((loc, idx) => {
+            const svgY   = groundY(loc.x);
+            const pct    = svgY / SVG_H;
             const isActive = active === loc.id;
+            // Alternate sign tilt slightly per marker
+            const tilt = [-1.5, 1, -1, 1.5][idx];
             return (
               <button
                 key={loc.id}
-                className="noscroll absolute flex flex-col items-center gap-1 group"
-                style={{ left: loc.x, top: `calc(${pct * 100}% - 88px)`, transform: 'translateX(-50%)' }}
+                className="noscroll absolute flex flex-col items-end"
+                style={{
+                  left: loc.x,
+                  top: `calc(${pct * 100}% - 80px)`,
+                  transform: 'translateX(-50%)',
+                  filter: isActive ? 'drop-shadow(0 4px 10px rgba(0,0,0,0.35))' : 'drop-shadow(0 2px 4px rgba(0,0,0,0.18))',
+                  transition: 'filter 0.3s',
+                }}
                 onClick={() => flyTo(loc.x, loc.id)}
               >
-                {/* Label */}
-                <div
-                  className="px-3 py-1 rounded-full text-xs font-medium transition-all"
-                  style={{
-                    background: isActive ? 'var(--rose-dark)' : 'rgba(250,244,240,0.88)',
-                    color: isActive ? 'var(--warm-white)' : 'var(--rose-dark)',
-                    backdropFilter: 'blur(8px)',
-                    boxShadow: '0 2px 12px rgba(0,0,0,0.15)',
-                  }}
-                >
-                  <span style={{ fontFamily: 'var(--font-serif-jp), serif' }}>{loc.label}</span>
-                  <span className="ml-1 opacity-60">/ {loc.sub}</span>
+                {/* Sign board */}
+                <div style={{
+                  transform: `rotate(${tilt}deg)`,
+                  transformOrigin: 'bottom center',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: 0,
+                }}>
+                  {/* Board */}
+                  <div style={{
+                    background: isActive
+                      ? 'linear-gradient(135deg, #8a5840 0%, #6a3a28 100%)'
+                      : 'linear-gradient(135deg, #b89070 0%, #9a7050 100%)',
+                    borderRadius: '3px 3px 0 0',
+                    padding: '5px 12px 6px',
+                    position: 'relative',
+                    minWidth: 80,
+                    textAlign: 'center',
+                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.2)',
+                    transition: 'background 0.3s',
+                  }}>
+                    {/* Wood grain lines */}
+                    <div style={{
+                      position: 'absolute', inset: 0, borderRadius: 3,
+                      backgroundImage: 'repeating-linear-gradient(90deg, transparent, transparent 6px, rgba(0,0,0,0.04) 6px, rgba(0,0,0,0.04) 7px)',
+                      pointerEvents: 'none',
+                    }}/>
+                    <div style={{
+                      fontFamily: 'var(--font-serif-jp), serif',
+                      fontSize: 13,
+                      fontWeight: 700,
+                      color: isActive ? '#fff3e8' : '#fff8f0',
+                      letterSpacing: '0.05em',
+                      textShadow: '0 1px 2px rgba(0,0,0,0.4)',
+                      position: 'relative',
+                      whiteSpace: 'nowrap',
+                    }}>{loc.label}</div>
+                    <div style={{
+                      fontSize: 9,
+                      color: isActive ? 'rgba(255,240,220,0.85)' : 'rgba(255,240,220,0.65)',
+                      letterSpacing: '0.03em',
+                      position: 'relative',
+                      marginTop: 1,
+                    }}>{loc.sub}</div>
+                    {/* Notch at bottom of board */}
+                    <div style={{
+                      position: 'absolute', bottom: -6, left: '50%',
+                      transform: 'translateX(-50%)',
+                      width: 0, height: 0,
+                      borderLeft: '8px solid transparent',
+                      borderRight: '8px solid transparent',
+                      borderTop: `6px solid ${isActive ? '#6a3a28' : '#9a7050'}`,
+                      transition: 'border-top-color 0.3s',
+                    }}/>
+                  </div>
+
+                  {/* Pole */}
+                  <div style={{
+                    width: 5,
+                    height: 40,
+                    background: isActive
+                      ? 'linear-gradient(90deg, #7a4830, #9a6040, #7a4830)'
+                      : 'linear-gradient(90deg, #8a6848, #b08858, #8a6848)',
+                    borderRadius: '0 0 2px 2px',
+                    boxShadow: '1px 0 2px rgba(0,0,0,0.2)',
+                    transition: 'background 0.3s',
+                    marginTop: 6,
+                  }}/>
                 </div>
-                {/* Pin */}
-                <div className="relative flex items-center justify-center">
-                  {isActive && (
-                    <div
-                      className="absolute w-8 h-8 rounded-full animate-ping"
-                      style={{ background: 'var(--rose-light)', opacity: 0.5 }}
-                    />
-                  )}
-                  <div
-                    className="w-4 h-4 rounded-full border-2 transition-all"
-                    style={{
-                      background: isActive ? 'var(--rose-dark)' : 'var(--warm-white)',
-                      borderColor: 'var(--rose-dark)',
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-                    }}
-                  />
-                </div>
-                {/* Connector line */}
-                <div className="w-px h-4" style={{ background: 'var(--rose-dark)', opacity: 0.4 }}/>
+
+                {/* Active pulse ring at base */}
+                {isActive && (
+                  <div style={{
+                    position: 'absolute',
+                    bottom: -4,
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: 16, height: 6,
+                    borderRadius: '50%',
+                    background: 'rgba(122,80,64,0.35)',
+                    animation: 'ping 1.2s cubic-bezier(0,0,0.2,1) infinite',
+                  }}/>
+                )}
               </button>
             );
           })}
