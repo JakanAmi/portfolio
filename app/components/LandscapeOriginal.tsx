@@ -31,6 +31,18 @@ export default function LandscapeOriginal() {
     <svg width={WORLD_W} height="100%" viewBox={`0 0 ${WORLD_W} ${SVG_H}`}
       preserveAspectRatio="none" className="absolute inset-0">
       <defs>
+        <style>{`
+          @keyframes smoke-orig {
+            0%   { transform: translate(0px,  0px) scale(0.4); opacity: 0.55; }
+            40%  { transform: translate(2px, -20px) scale(0.9); opacity: 0.35; }
+            100% { transform: translate(5px, -52px) scale(1.8); opacity: 0; }
+          }
+          .sm-orig {
+            transform-box: fill-box;
+            transform-origin: center;
+            animation: smoke-orig 2.8s ease-out infinite;
+          }
+        `}</style>
         <linearGradient id="skyV" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#b090b8"/>
           <stop offset="100%" stopColor="#f0dcd4"/>
@@ -114,9 +126,12 @@ export default function LandscapeOriginal() {
       <rect x="1958" y="328" width="84" height="52" fill="#b09070" rx="2"/>
       <polygon points="1951,328 2000,294 2049,328" fill="#7a5038"/>
       <rect x="2010" y="285" width="13" height="24" fill="#8a6048"/>
-      <ellipse cx="2015" cy="278" rx="6" ry="5" fill="#e8d8d0" opacity="0.35"/>
-      <ellipse cx="2019" cy="266" rx="5" ry="4" fill="#e8d8d0" opacity="0.25"/>
-      <ellipse cx="2024" cy="256" rx="4" ry="3" fill="#e8d8d0" opacity="0.18"/>
+      {/* 煙アニメーション（4パフ、0.7s ずつずれ） */}
+      {[0, 0.7, 1.4, 2.1].map((delay, i) => (
+        <ellipse key={i} cx="2016" cy="283" rx="5" ry="4"
+          fill="#e8d8d0" className="sm-orig"
+          style={{ animationDelay: `${delay}s` }}/>
+      ))}
       <rect x="1973" y="340" width="15" height="14" fill="#f8e8d8" opacity="0.7" rx="1"/>
       <rect x="2000" y="340" width="15" height="14" fill="#f8e8d8" opacity="0.7" rx="1"/>
       <rect x="1984" y="354" width="20" height="26" fill="#5a3828" rx="1"/>

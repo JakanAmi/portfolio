@@ -42,6 +42,18 @@ export default function LandscapeWinter() {
     <svg width={WORLD_W} height="100%" viewBox={`0 0 ${WORLD_W} ${SVG_H}`}
       preserveAspectRatio="none" className="absolute inset-0">
       <defs>
+        <style>{`
+          @keyframes smoke-wint {
+            0%   { transform: translate(0px,  0px) scale(0.4); opacity: 0.6; }
+            40%  { transform: translate(2px, -22px) scale(0.85); opacity: 0.38; }
+            100% { transform: translate(6px, -55px) scale(2.0); opacity: 0; }
+          }
+          .sm-wint {
+            transform-box: fill-box;
+            transform-origin: center;
+            animation: smoke-wint 3.0s ease-out infinite;
+          }
+        `}</style>
         <linearGradient id="skyW" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#0a0e1a"/>
           <stop offset="45%" stopColor="#1a2340"/>
@@ -234,10 +246,12 @@ export default function LandscapeWinter() {
       <path d="M1953,328 Q2000,300 2047,328" fill="#e0f0fc" opacity="0.3"/>
       {/* Chimney */}
       <rect x="2010" y="285" width="13" height="24" fill="#364e68"/>
-      {/* Warm smoke */}
-      <ellipse cx="2016" cy="278" rx="6" ry="5" fill="#f8d898" opacity="0.25"/>
-      <ellipse cx="2020" cy="266" rx="5" ry="4" fill="#f8e0a0" opacity="0.18"/>
-      <ellipse cx="2025" cy="255" rx="4" ry="3.5" fill="#f0d890" opacity="0.12"/>
+      {/* 煙アニメーション（暖色・4パフ） */}
+      {[0, 0.75, 1.5, 2.25].map((delay, i) => (
+        <ellipse key={i} cx="2016" cy="283" rx="5" ry="4"
+          fill="#f8d898" className="sm-wint"
+          style={{ animationDelay: `${delay}s` }}/>
+      ))}
       {/* Warm lit windows */}
       <rect x="1973" y="340" width="15" height="14" fill="#f8d070" opacity="0.95" rx="1"/>
       <rect x="2000" y="340" width="15" height="14" fill="#f8e088" opacity="0.9" rx="1"/>
